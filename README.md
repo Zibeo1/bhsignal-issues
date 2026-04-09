@@ -225,6 +225,7 @@ BHSignal is a single-page Angular application. There is one real route (`/`); al
     ├── Save session → localStorage
     └── Log out
 ```
+<img width="1041" height="291" alt="Sitemap-bhsignal" src="https://github.com/user-attachments/assets/3d08b11b-a880-4b52-bdc4-114d11ef8045" />
 
 ---
 
