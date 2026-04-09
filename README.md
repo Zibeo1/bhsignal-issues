@@ -233,6 +233,47 @@ BHSignal is a single-page Angular application. There is one real route (`/`); al
 Mockups for all screens are attached to each GitHub issue. 
 ---
 
+## UML Diagram
+
+The diagram below shows the full interaction between all system participants for a single news ingestion cycle.
+Diagram type: Sequence diagram
+Scope: End-to-end data flow from RSS fetch through to frontend map update
+Title: BHSignal — news ingestion sequence
+
+participant Klix RSS
+participant scraper-service
+participant outbox
+participant integration-api
+participant frontend
+
+loop every 5 minutes
+  scraper-service -> scraper-service : scheduler trigger
+  scraper-service -> Klix RSS        : GET /rss
+  Klix RSS        --> scraper-service: RSS entries
+  scraper-service -> scraper-service : resolve location (catalog match)
+  scraper-service -> outbox          : enqueue event (news.created / news.updated)
+  outbox          --> scraper-service: event id
+end
+
+loop every 20 seconds
+  outbox -> integration-api : POST /api/v1/webhooks/news
+  note over outbox, integration-api : headers: X-Event-Id, X-Signature-256
+  integration-api -> integration-api : verify HMAC-SHA256 signature
+  integration-api -> integration-api : check idempotency (X-Event-Id)
+  integration-api -> integration-api : upsert news item
+  integration-api --> outbox         : 202 Accepted
+  integration-api -> frontend        : SSE broadcast (news.created / news.updated)
+  frontend -> frontend               : upsert in-memory article store
+  frontend -> frontend               : re-render map circles
+end
+
+alt polling fallback (every 45s)
+  frontend -> integration-api : GET /api/v1/news
+  integration-api --> frontend : NewsListResponse
+end
+
+---
+
 ## API Documentation
 
 ### Scraper service — `http://localhost:8081`
