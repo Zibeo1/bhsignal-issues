@@ -1,0 +1,63 @@
+<div class="detail-shell">
+  <header class="detail-topbar">
+    <a class="back-link" [routerLink]="['/']">&larr; Back to map</a>
+    <div class="brand-row">
+      <div class="brand-badge">BH</div>
+      <div>
+        <div class="brand-title">BHSignal</div>
+        <div class="brand-subtitle">Article view</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="detail-frame">
+    <div class="detail-loading" *ngIf="loading()">Loading article&hellip;</div>
+
+    <div class="detail-empty" *ngIf="!loading() && notFound()">
+      <h1>Article not found</h1>
+      <p>The article you requested could not be loaded.</p>
+      <a class="primary-button" [routerLink]="['/']">Return to map</a>
+    </div>
+
+    <article class="detail-card" *ngIf="!loading() && article() as item">
+      <div class="detail-meta">
+        <span class="detail-category">{{ formatCategory(item.category) }}</span>
+        <span class="detail-time">{{ item.publishedAt | date: 'medium' }}</span>
+      </div>
+
+      <h1 class="detail-title">{{ item.title }}</h1>
+
+      <div class="detail-submeta">
+        <span *ngIf="item.locationName" class="submeta-pill">{{ item.locationName }}</span>
+        <span *ngIf="item.author" class="submeta-pill">{{ item.author }}</span>
+        <span class="submeta-pill">Source: {{ item.source }}</span>
+      </div>
+
+      <img
+        class="detail-image"
+        *ngIf="item.imageUrl"
+        [src]="item.imageUrl"
+        [alt]="item.title"
+      />
+
+      <p class="detail-summary">{{ item.summary }}</p>
+
+      <a class="primary-button" [href]="item.url" target="_blank" rel="noopener noreferrer">
+        Open original article
+      </a>
+
+      <section class="detail-mini-map" *ngIf="hasCoordinates(item)">
+        <h2 class="mini-map-title">Location on map</h2>
+        <p class="mini-map-caption">
+          {{ item.locationName || 'Coordinates' }}
+          ({{ item.latitude }}, {{ item.longitude }})
+        </p>
+        <div class="mini-map-canvas" #miniMapContainer></div>
+      </section>
+
+      <section class="detail-no-map" *ngIf="!hasCoordinates(item)">
+        <p>No location data available for this article.</p>
+      </section>
+    </article>
+  </main>
+</div>
