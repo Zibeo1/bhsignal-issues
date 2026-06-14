@@ -2,6 +2,12 @@
   command = "ng build"
   publish = "dist/bhsignal-issues/browser"
 
+[build.environment]
+  NODE_VERSION = "22"
+
+[context.deploy-preview]
+  command = "ng build --configuration development"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
