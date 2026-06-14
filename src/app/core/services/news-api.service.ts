@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable, Subject, catchError, of } from 'rxjs';
+import { Observable, Subject, catchError, of, switchMap } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 
 import { API_BASE_URL } from '../config/api-base-url.token';
@@ -217,7 +217,12 @@ export class NewsApiService {
 
     return this.http
       .get<NewsListResponse>(`${this.apiBaseUrl}/api/v1/news`, { params })
-      .pipe(catchError(() => this.listNewsFallback(query)));
+      .pipe(
+        switchMap(response =>
+          response.items.length === 0 ? this.listNewsFallback(query) : of(response),
+        ),
+        catchError(() => this.listNewsFallback(query)),
+      );
   }
 
   streamNews(): Observable<NewsStreamEvent> {
