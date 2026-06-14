@@ -1,0 +1,65 @@
+<div class="feed-page">
+  <header class="feed-header">
+    <a routerLink="/" class="back-link">← Back to Map</a>
+    <h1 class="feed-title">News Feed</h1>
+    <p class="feed-subtitle">Browse all incoming signals from Bosnia and Herzegovina</p>
+  </header>
+
+  <div class="feed-controls">
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Search headlines, locations…"
+      [ngModel]="searchQuery()"
+      (ngModelChange)="searchQuery.set($event)"
+    />
+
+    <div class="category-chips">
+      @for (cat of categories(); track cat) {
+        <button
+          class="chip"
+          [class.chip--active]="selectedCategory() === cat"
+          (click)="setCategory(cat)"
+        >
+          {{ cat === 'all' ? 'All' : formatCategory(cat) }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="spinner"></span>
+      <span>Loading articles…</span>
+    </div>
+  } @else if (filteredArticles().length === 0) {
+    <div class="empty-state">No articles match your filters.</div>
+  } @else {
+    <div class="article-count">{{ filteredArticles().length }} articles</div>
+    <ul class="article-list">
+      @for (article of filteredArticles(); track article.id) {
+        <li class="article-card">
+          @if (article.imageUrl) {
+            <img class="article-thumb" [src]="article.imageUrl" [alt]="article.title" loading="lazy" />
+          }
+          <div class="article-body">
+            <div class="article-meta">
+              <span class="article-category">{{ formatCategory(article.category) }}</span>
+              <span class="article-sep">·</span>
+              <span class="article-location">{{ article.locationName ?? 'Unknown location' }}</span>
+              <span class="article-sep">·</span>
+              <span class="article-time">{{ relativeTime(article.publishedAt) }}</span>
+            </div>
+            <h2 class="article-title">
+              <a [routerLink]="['/news', article.id]" class="article-link">{{ article.title }}</a>
+            </h2>
+            <p class="article-summary">{{ article.summary }}</p>
+            @if (article.author) {
+              <span class="article-author">By {{ article.author }}</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>
