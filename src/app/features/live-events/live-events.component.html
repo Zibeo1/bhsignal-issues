@@ -1,0 +1,71 @@
+<div class="live-page">
+  <header class="live-header">
+    <a routerLink="/" class="back-link">← Back to Map</a>
+    <div class="live-title-row">
+      <h1 class="live-title">Live Event Stream</h1>
+      <div class="status-badge" [class.status-badge--on]="connected()">
+        <span class="status-dot"></span>
+        {{ connected() ? 'Connected' : 'Disconnected' }}
+      </div>
+    </div>
+    <p class="live-subtitle">Real-time SSE events from the integration API</p>
+  </header>
+
+  <div class="live-controls">
+    <div class="live-stats">
+      <span class="stat-item">
+        <span class="stat-label">Events received</span>
+        <span class="stat-value">{{ eventCount() }}</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-label">In buffer</span>
+        <span class="stat-value">{{ events().length }}</span>
+      </span>
+    </div>
+    <div class="control-buttons">
+      @if (connected()) {
+        <button class="btn btn--danger" (click)="disconnect()">Disconnect</button>
+      } @else {
+        <button class="btn btn--primary" (click)="connect()">Connect</button>
+      }
+      <button class="btn btn--ghost" (click)="clearEvents()" [disabled]="events().length === 0">
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <div class="stream-container">
+    @if (events().length === 0) {
+      <div class="stream-empty">
+        @if (connected()) {
+          <span class="pulse-dot"></span>
+          <span>Waiting for events…</span>
+        } @else {
+          <span>Connect to start receiving events</span>
+        }
+      </div>
+    } @else {
+      <ul class="event-list">
+        @for (event of events(); track event.id) {
+          <li class="event-item">
+            <div class="event-badge" [class.event-badge--new]="formatEventType(event.eventType) === 'NEW'">
+              {{ formatEventType(event.eventType) }}
+            </div>
+            <div class="event-body">
+              <div class="event-meta">
+                <span class="event-location">{{ event.data.locationName ?? 'Unknown' }}</span>
+                <span class="event-sep">·</span>
+                <span class="event-category">{{ event.data.category ?? 'General' }}</span>
+                <span class="event-sep">·</span>
+                <span class="event-time">{{ relativeTime(event.receivedAt) }}</span>
+              </div>
+              <p class="event-title">
+                <a [routerLink]="['/news', event.data.id]" class="event-link">{{ event.data.title }}</a>
+              </p>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
