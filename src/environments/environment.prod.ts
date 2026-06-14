@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://bhsignal-api.herokuapp.com',
+  apiBaseUrl: 'https://bhsignal-api-production.up.railway.app',
 };
