@@ -1,0 +1,69 @@
+<div class="stats-page">
+  <header class="stats-header">
+    <a routerLink="/" class="back-link">← Back to Map</a>
+    <h1 class="stats-title">Statistics</h1>
+    <p class="stats-subtitle">News signal analytics across Bosnia and Herzegovina</p>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="spinner"></span>
+      <span>Computing statistics…</span>
+    </div>
+  } @else {
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-value">{{ totalArticles() }}</div>
+        <div class="summary-label">Total Articles</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value">{{ uniqueLocations() }}</div>
+        <div class="summary-label">Unique Locations</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value">{{ categoryStats().length }}</div>
+        <div class="summary-label">Categories</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value">{{ locatedPercent() }}%</div>
+        <div class="summary-label">Geolocated</div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <section class="stat-section">
+        <h2 class="section-title">By Category</h2>
+        <ul class="bar-list">
+          @for (stat of categoryStats(); track stat.key) {
+            <li class="bar-item">
+              <div class="bar-label-row">
+                <span class="bar-label">{{ stat.label }}</span>
+                <span class="bar-count">{{ stat.count }}</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" [style.width.%]="stat.percent"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      </section>
+
+      <section class="stat-section">
+        <h2 class="section-title">Top Locations</h2>
+        <ul class="bar-list">
+          @for (stat of locationStats(); track stat.name) {
+            <li class="bar-item">
+              <div class="bar-label-row">
+                <span class="bar-label">{{ stat.name }}</span>
+                <span class="bar-count">{{ stat.count }}</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill bar-fill--location" [style.width.%]="stat.percent"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      </section>
+    </div>
+  }
+</div>
