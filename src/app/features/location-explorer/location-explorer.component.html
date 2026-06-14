@@ -1,0 +1,65 @@
+<div class="explorer-page">
+  <header class="explorer-header">
+    <a routerLink="/" class="back-link">← Back to Map</a>
+    <h1 class="explorer-title">Location Explorer</h1>
+    <p class="explorer-subtitle">Browse news signals grouped by geographic location</p>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <span class="spinner"></span>
+      <span>Resolving locations…</span>
+    </div>
+  } @else {
+    <div class="explorer-layout">
+      <aside class="location-list">
+        <div class="list-label">{{ locationBuckets().length }} locations</div>
+        @for (bucket of locationBuckets(); track bucket.name) {
+          <button
+            class="location-row"
+            [class.location-row--active]="selectedLocation() === bucket.name"
+            (click)="selectLocation(bucket.name)"
+          >
+            <div class="location-info">
+              <span class="location-name">{{ bucket.name }}</span>
+              <div class="location-cats">
+                @for (cat of bucket.categories.slice(0, 3); track cat) {
+                  <span class="cat-tag">{{ formatCategory(cat) }}</span>
+                }
+              </div>
+            </div>
+            <span class="location-count">{{ bucket.count }}</span>
+          </button>
+        }
+      </aside>
+
+      <section class="articles-panel">
+        @if (selectedLocation() === null) {
+          <div class="panel-empty">
+            <p>Select a location to view its articles</p>
+          </div>
+        } @else {
+          <div class="panel-header">
+            <h2 class="panel-title">{{ selectedLocation() }}</h2>
+            <span class="panel-count">{{ locationArticles().length }} articles</span>
+          </div>
+          <ul class="panel-list">
+            @for (article of locationArticles(); track article.id) {
+              <li class="panel-card">
+                <div class="panel-meta">
+                  <span class="panel-category">{{ formatCategory(article.category) }}</span>
+                  <span class="panel-sep">·</span>
+                  <span class="panel-time">{{ relativeTime(article.publishedAt) }}</span>
+                </div>
+                <h3 class="panel-article-title">
+                  <a [routerLink]="['/news', article.id]" class="panel-link">{{ article.title }}</a>
+                </h3>
+                <p class="panel-summary">{{ article.summary }}</p>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</div>
