@@ -1,6 +1,6 @@
 [build]
   command = "ng build"
-  publish = "dist/bhsignal-issues/browser"
+  publish = "dist/bhsignal-frontend/browser"
 
 [build.environment]
   NODE_VERSION = "22"
