@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { API_BASE_URL } from './core/config/api-base-url.token';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     {
       provide: API_BASE_URL,
-      useValue: 'http://localhost:8080',
+      useValue: environment.apiBaseUrl,
     },
   ],
 };

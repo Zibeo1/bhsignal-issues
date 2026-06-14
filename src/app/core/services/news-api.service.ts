@@ -1,6 +1,7 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, Subject, catchError, of } from 'rxjs';
+import { delay, map } from 'rxjs/operators';
 
 import { API_BASE_URL } from '../config/api-base-url.token';
 import { NewsItem, NewsListResponse, NewsStreamEvent } from '../models/news-item.model';
@@ -11,6 +12,7 @@ interface ListQuery {
   limit?: number;
   from?: string;
   to?: string;
+  bbox?: string;
 }
 
 const DUMMY_NEWS: NewsItem[] = [
@@ -188,39 +190,77 @@ const DUMMY_NEWS: NewsItem[] = [
   providedIn: 'root',
 })
 export class NewsApiService {
-  constructor(@Inject(API_BASE_URL) private readonly apiBaseUrl: string) {}
+  constructor(
+    @Inject(API_BASE_URL) private readonly apiBaseUrl: string,
+    private readonly http: HttpClient,
+  ) {}
 
   getNewsById(id: string): Observable<NewsItem | null> {
-    const match: NewsItem | undefined = DUMMY_NEWS.find((item) => item.id === id);
-    return of(match ?? null).pipe(delay(150));
+    if (id.startsWith('dummy-')) {
+      const match = DUMMY_NEWS.find((item) => item.id === id);
+      return of(match ?? null).pipe(delay(150));
+    }
+
+    return this.http
+      .get<NewsItem>(`${this.apiBaseUrl}/api/v1/news/${id}`)
+      .pipe(catchError(() => of(null)));
   }
 
   listNews(query: ListQuery = {}): Observable<NewsListResponse> {
+    let params = new HttpParams();
+    if (query.category) params = params.set('category', query.category);
+    if (query.location) params = params.set('location', query.location);
+    if (query.limit) params = params.set('limit', String(query.limit));
+    if (query.from) params = params.set('from', query.from);
+    if (query.to) params = params.set('to', query.to);
+    if (query.bbox) params = params.set('bbox', query.bbox);
+
+    return this.http
+      .get<NewsListResponse>(`${this.apiBaseUrl}/api/v1/news`, { params })
+      .pipe(catchError(() => this.listNewsFallback(query)));
+  }
+
+  streamNews(): Observable<NewsStreamEvent> {
+    const subject = new Subject<NewsStreamEvent>();
+
+    const eventSource = new EventSource(`${this.apiBaseUrl}/api/v1/stream/news`);
+
+    const handleEvent = (raw: MessageEvent): void => {
+      try {
+        const parsed = JSON.parse(raw.data as string) as NewsStreamEvent;
+        if (parsed.data) subject.next(parsed);
+      } catch {
+        // skip malformed events
+      }
+    };
+
+    eventSource.onmessage = handleEvent;
+    eventSource.addEventListener('news.created', handleEvent);
+    eventSource.addEventListener('news.updated', handleEvent);
+
+    eventSource.onerror = () => {
+      eventSource.close();
+      subject.complete();
+    };
+
+    return subject.asObservable();
+  }
+
+  private listNewsFallback(query: ListQuery): Observable<NewsListResponse> {
     let items: NewsItem[] = [...DUMMY_NEWS];
 
     if (query.category) {
       items = items.filter((item) => item.category === query.category);
     }
-
     if (query.location) {
       items = items.filter((item) =>
         (item.locationName ?? '').toLowerCase().includes(query.location!.toLowerCase()),
       );
     }
-
     if (typeof query.limit === 'number' && query.limit > 0) {
       items = items.slice(0, query.limit);
     }
 
-    return of({
-      items,
-      nextSince: null,
-    }).pipe(delay(200));
-  }
-
-  streamNews(): Observable<NewsStreamEvent> {
-    return new Observable<NewsStreamEvent>(() => {
-      return () => undefined;
-    });
+    return of({ items, nextSince: null }).pipe(delay(200));
   }
 }
