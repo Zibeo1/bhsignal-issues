@@ -1,0 +1,57 @@
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-top">
+      <a class="auth-back" routerLink="/">{{ 'nav.backToMap' | t }}</a>
+      <button class="auth-lang" type="button" (click)="translation.toggleLanguage()">
+        {{ translation.language() === 'en' ? 'BS' : 'EN' }}
+      </button>
+    </div>
+
+    <div class="auth-brand">
+      <div class="auth-badge">BH</div>
+      <div>
+        <h1 class="auth-title">{{ 'auth.loginTitle' | t }}</h1>
+        <p class="auth-subtitle">{{ 'auth.loginSubtitle' | t }}</p>
+      </div>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submit()">
+      <div *ngIf="error()" class="auth-error">{{ error() }}</div>
+
+      <div>
+        <label class="auth-label" for="login-email">{{ 'auth.email' | t }}</label>
+        <input
+          id="login-email"
+          class="auth-input"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          autocomplete="email"
+        />
+      </div>
+
+      <div>
+        <label class="auth-label" for="login-password">{{ 'auth.password' | t }}</label>
+        <input
+          id="login-password"
+          class="auth-input"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          autocomplete="current-password"
+        />
+      </div>
+
+      <button class="auth-button" type="submit" [disabled]="loading() || !email.trim() || !password">
+        {{ loading() ? ('auth.loggingIn' | t) : ('auth.loginButton' | t) }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      {{ 'auth.noAccount' | t }}
+      <a class="auth-link" routerLink="/signup">{{ 'nav.signup' | t }}</a>
+    </div>
+  </div>
+</div>

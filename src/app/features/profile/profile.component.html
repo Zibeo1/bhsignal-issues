@@ -1,0 +1,57 @@
+<div class="auth-shell">
+  <div class="auth-card" *ngIf="user() as currentUser">
+    <div class="auth-top">
+      <a class="auth-back" routerLink="/">{{ 'nav.backToMap' | t }}</a>
+      <button class="auth-lang" type="button" (click)="translation.toggleLanguage()">
+        {{ translation.language() === 'en' ? 'BS' : 'EN' }}
+      </button>
+    </div>
+
+    <div class="auth-brand">
+      <div class="auth-badge">BH</div>
+      <div>
+        <h1 class="auth-title">{{ 'profile.title' | t }}</h1>
+        <p class="auth-subtitle">{{ 'profile.subtitle' | t }}</p>
+      </div>
+    </div>
+
+    <p class="auth-meta">{{ currentUser.email }}</p>
+    <p class="auth-meta">
+      {{ 'profile.memberSince' | t }}: {{ currentUser.createdAt | date: 'mediumDate' }}
+    </p>
+
+    <form class="auth-form" (ngSubmit)="save()">
+      <div *ngIf="error()" class="auth-error">{{ error() }}</div>
+      <div *ngIf="success()" class="auth-success">{{ 'profile.updated' | t }}</div>
+
+      <div>
+        <label class="auth-label" for="profile-name">{{ 'auth.name' | t }}</label>
+        <input id="profile-name" class="auth-input" type="text" name="name" [(ngModel)]="name" required />
+      </div>
+
+      <div>
+        <label class="auth-label" for="profile-password">{{ 'profile.newPassword' | t }}</label>
+        <input
+          id="profile-password"
+          class="auth-input"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          minlength="6"
+          autocomplete="new-password"
+        />
+        <div class="auth-hint">{{ 'auth.passwordHint' | t }}</div>
+      </div>
+
+      <button class="auth-button" type="submit" [disabled]="loading() || !name.trim()">
+        {{ loading() ? ('profile.saving' | t) : ('profile.update' | t) }}
+      </button>
+    </form>
+
+    <button class="auth-danger" type="button" (click)="remove()">{{ 'profile.delete' | t }}</button>
+
+    <div class="auth-footer">
+      <a class="auth-link" (click)="logout()" style="cursor: pointer">{{ 'nav.logout' | t }}</a>
+    </div>
+  </div>
+</div>
