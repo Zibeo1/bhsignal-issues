@@ -11,7 +11,7 @@
 
       <div class="topbar-actions">
         <button class="nav-pill nav-pill-active" type="button" (click)="jumpToFeed()">
-          News <span class="nav-count">{{ filteredNews().length }}</span>
+          {{ 'nav.news' | t }} <span class="nav-count">{{ filteredNews().length }}</span>
         </button>
         <button class="nav-icon-button" type="button" (click)="cycleTimePreset()">
           {{ hoursBack() }}h
@@ -22,7 +22,7 @@
           [class.nav-icon-button-active]="legendVisible()"
           (click)="toggleLegend()"
         >
-          Legend
+          {{ 'nav.legend' | t }}
         </button>
         <button
           class="nav-icon-button"
@@ -30,17 +30,31 @@
           [class.nav-icon-button-active]="isNotificationsOpen()"
           (click)="toggleNotifications()"
         >
-          Alerts
+          {{ 'nav.alerts' | t }}
           <span class="nav-badge" *ngIf="unreadActivityCount() > 0">{{ unreadActivityCount() }}</span>
         </button>
-        <button class="nav-login" type="button" (click)="openLogin()">
-          {{ sessionUser()?.name || 'Login' }}
+        <button class="nav-icon-button" type="button" (click)="translation.toggleLanguage()">
+          {{ translation.language() === 'en' ? 'BS' : 'EN' }}
         </button>
+        <a class="nav-login" *ngIf="auth.isLoggedIn(); else loginLink" routerLink="/profile">
+          {{ auth.user()?.name }}
+        </a>
+        <ng-template #loginLink>
+          <a class="nav-login" routerLink="/login">{{ 'nav.login' | t }}</a>
+        </ng-template>
       </div>
     </header>
 
     <section class="toolbar">
       <div class="chips-row">
+        <button
+          type="button"
+          class="status-chip"
+          [class.status-chip-active]="selectedCategory() === 'all'"
+          (click)="selectedCategory.set('all')"
+        >
+          {{ 'toolbar.allCategories' | t }}
+        </button>
         <button
           *ngFor="let category of categorySummaries(); trackBy: trackByCategory"
           type="button"
@@ -60,7 +74,7 @@
           class="search-field"
           [ngModel]="searchQuery()"
           (ngModelChange)="searchQuery.set($event)"
-          placeholder="Search headline, place, category"
+          [placeholder]="'toolbar.searchPlaceholder' | t"
         />
 
         <select
@@ -69,12 +83,12 @@
           (ngModelChange)="selectedPrecision.set($event)"
         >
           <option *ngFor="let precision of precisions()" [value]="precision">
-            {{ precision === 'all' ? 'All precision' : precision }}
+            {{ precision === 'all' ? ('toolbar.allPrecision' | t) : precision }}
           </option>
         </select>
 
         <button class="action-button" type="button" (click)="clearFocus()" [disabled]="!focusedCircleKey()">
-          Clear focus
+          {{ 'toolbar.clearFocus' | t }}
         </button>
       </div>
     </section>
@@ -84,15 +98,15 @@
         <div class="map-canvas" #mapContainer></div>
 
         <div class="live-countdown">
-          Refresh in {{ nextRefreshInSeconds() }}s
+          {{ 'map.refreshIn' | t: { s: nextRefreshInSeconds() } }}
         </div>
 
         <div class="legend-card" *ngIf="legendVisible()">
-          <div class="legend-title">Legend</div>
+          <div class="legend-title">{{ 'legend.title' | t }}</div>
           <div class="legend-list">
-            <span class="legend-pill">Category colored markers</span>
-            <span class="legend-pill">Larger dots = more stories</span>
-            <span class="legend-pill">Window = last {{ hoursBack() }}h</span>
+            <span class="legend-pill">{{ 'legend.colored' | t }}</span>
+            <span class="legend-pill">{{ 'legend.size' | t }}</span>
+            <span class="legend-pill">{{ 'legend.window' | t: { h: hoursBack() } }}</span>
           </div>
         </div>
 
@@ -135,7 +149,7 @@
         <div class="feed-header">
           <div class="feed-title-row">
             <span class="feed-dot"></span>
-            <span>Live Feed</span>
+            <span>{{ 'feed.live' | t }}</span>
           </div>
           <div class="feed-count">{{ feedCountLabel() }}</div>
         </div>
@@ -157,11 +171,11 @@
 
             <div class="feed-item-title">{{ item.title }}</div>
 
-            <div class="feed-item-location">{{ item.locationName || 'Unknown location' }}</div>
+            <div class="feed-item-location">{{ item.locationName || ('feed.unknownLocation' | t) }}</div>
           </a>
 
           <div class="empty-state" *ngIf="featuredArticles().length === 0">
-            No stories match the active filters.
+            {{ 'feed.empty' | t }}
           </div>
         </div>
       </aside>
@@ -170,12 +184,12 @@
     <aside class="notification-drawer" *ngIf="isNotificationsOpen()" [@fadeSlide]>
       <div class="drawer-header">
         <div>
-          <div class="drawer-title">Notifications</div>
-          <div class="drawer-copy">Latest news events arriving from the live feed</div>
+          <div class="drawer-title">{{ 'notif.title' | t }}</div>
+          <div class="drawer-copy">{{ 'notif.subtitle' | t }}</div>
         </div>
         <div class="drawer-actions">
-          <button class="drawer-action" type="button" (click)="markAllNotificationsRead()">Mark all read</button>
-          <button class="drawer-close" type="button" (click)="toggleNotifications()">Close</button>
+          <button class="drawer-action" type="button" (click)="markAllNotificationsRead()">{{ 'notif.markAllRead' | t }}</button>
+          <button class="drawer-close" type="button" (click)="toggleNotifications()">{{ 'notif.close' | t }}</button>
         </div>
       </div>
 
@@ -187,7 +201,7 @@
             [class.drawer-filter-active]="notificationMode() === 'all'"
             (click)="setNotificationMode('all')"
           >
-            All
+            {{ 'notif.all' | t }}
           </button>
           <button
             class="drawer-filter"
@@ -195,7 +209,7 @@
             [class.drawer-filter-active]="notificationMode() === 'unread'"
             (click)="setNotificationMode('unread')"
           >
-            Unread
+            {{ 'notif.unread' | t }}
           </button>
         </div>
 
@@ -205,7 +219,7 @@
           (ngModelChange)="setNotificationCategory($event)"
         >
           <option *ngFor="let category of notificationCategories()" [value]="category">
-            {{ category === 'all' ? 'All categories' : categoryLabel(category) }}
+            {{ category === 'all' ? ('notif.allCategories' | t) : categoryLabel(category) }}
           </option>
         </select>
       </div>
@@ -222,9 +236,9 @@
         >
           <div class="drawer-item-head">
             <span class="drawer-type" [class.drawer-type-update]="item.type === 'updated'">
-              {{ item.type === 'created' ? 'New' : 'Updated' }}
+              {{ item.type === 'created' ? ('notif.new' | t) : ('notif.updated' | t) }}
             </span>
-            <span>{{ isActivityRead(item.id) ? 'Read' : 'Unread' }} · {{ relativeTime(item.createdAt) }}</span>
+            <span>{{ (isActivityRead(item.id) ? 'notif.read' : 'notif.unread') | t }} · {{ relativeTime(item.createdAt) }}</span>
           </div>
           <div class="drawer-item-title">{{ item.title }}</div>
           <div class="drawer-item-meta">
@@ -233,7 +247,7 @@
         </a>
 
         <div class="empty-state drawer-empty" *ngIf="filteredActivityItems().length === 0">
-          No notifications match the current filter.
+          {{ 'notif.empty' | t }}
         </div>
       </div>
     </aside>
@@ -257,50 +271,4 @@
       </a>
     </div>
   </main>
-
-  <div class="modal-scrim" *ngIf="isLoginOpen()">
-    <div class="login-modal" [@fadeSlide]>
-      <div class="modal-header">
-        <div>
-          <div class="modal-title">Login session</div>
-          <div class="modal-copy">Use a local session to personalize alerts and controls.</div>
-        </div>
-        <button class="drawer-close" type="button" (click)="closeLogin()">Close</button>
-      </div>
-
-      <form class="login-form" (ngSubmit)="submitLogin()">
-        <label class="modal-label" for="login-name">Name</label>
-        <input
-          id="login-name"
-          class="modal-field"
-          type="text"
-          name="loginName"
-          [(ngModel)]="loginNameDraft"
-          placeholder="GeoNews operator"
-        />
-
-        <label class="modal-label" for="login-email">Email</label>
-        <input
-          id="login-email"
-          class="modal-field"
-          type="email"
-          name="loginEmail"
-          [(ngModel)]="loginEmailDraft"
-          placeholder="operator@example.com"
-        />
-
-        <div class="modal-actions">
-          <button class="action-button" type="submit" [disabled]="!loginNameDraft.trim() || !loginEmailDraft.trim()">
-            Save session
-          </button>
-          <button class="action-button action-button-secondary" type="button" (click)="closeLogin()">
-            Cancel
-          </button>
-          <button class="action-button action-button-danger" type="button" *ngIf="sessionUser()" (click)="logout()">
-            Log out
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 </div>

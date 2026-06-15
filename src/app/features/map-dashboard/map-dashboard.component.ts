@@ -6,6 +6,7 @@ import {
   ViewChild,
   computed,
   effect,
+  inject,
   signal,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -17,6 +18,9 @@ import { Subscription, interval } from 'rxjs';
 
 import { NewsItem } from '../../core/models/news-item.model';
 import { NewsApiService } from '../../core/services/news-api.service';
+import { AuthService } from '../../core/services/auth.service';
+import { TranslationService } from '../../core/i18n/translation.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 const POLLING_INTERVAL_MS = 45_000;
 
@@ -65,7 +69,7 @@ interface CategoryVisual {
 
 @Component({
   selector: 'app-map-dashboard',
-  imports: [CommonModule, FormsModule, DatePipe, RouterLink],
+  imports: [CommonModule, FormsModule, DatePipe, RouterLink, TranslatePipe],
   templateUrl: './map-dashboard.component.html',
   styleUrl: './map-dashboard.component.css',
   animations: [
@@ -115,14 +119,15 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
   readonly allNews = signal<NewsItem[]>([]);
   readonly legendVisible = signal(true);
   readonly isNotificationsOpen = signal(false);
-  readonly isLoginOpen = signal(false);
   readonly activityItems = signal<ActivityItem[]>([]);
   readonly toastItems = signal<ActivityItem[]>([]);
   readonly readActivityIds = signal<string[]>([]);
   readonly notificationMode = signal<NotificationMode>('all');
   readonly notificationCategory = signal('all');
-  readonly sessionUser = signal<{ name: string; email: string } | null>(null);
   readonly nextRefreshInSeconds = signal(Math.floor(POLLING_INTERVAL_MS / 1000));
+
+  readonly auth = inject(AuthService);
+  readonly translation = inject(TranslationService);
 
   readonly categories = computed(() => {
     const distinct = new Set<string>();
@@ -208,7 +213,9 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
   readonly locationCount = computed(
     () => new Set(this.filteredNews().map((item) => item.locationName || 'unknown')).size,
   );
-  readonly feedCountLabel = computed(() => `${this.featuredArticles().length} events`);
+  readonly feedCountLabel = computed(() =>
+    this.translation.translate('feed.events', { n: this.featuredArticles().length }),
+  );
   readonly notificationCategories = computed(() => {
     const categories = new Set<string>();
     this.activityItems().forEach((item) => {
@@ -252,9 +259,6 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
   private reconnectTimer?: ReturnType<typeof setTimeout>;
   private readonly toastTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
-  loginNameDraft = '';
-  loginEmailDraft = '';
-
   constructor(private readonly newsApi: NewsApiService) {
     effect(() => {
       const circles = this.mapCircles();
@@ -266,7 +270,6 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.restoreSession();
     this.initializeMap();
     this.fetchLatestNews();
     this.startPolling();
@@ -356,38 +359,6 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
   markAllNotificationsRead(): void {
     const allIds = this.activityItems().map((item) => item.id);
     this.readActivityIds.set(Array.from(new Set(allIds)));
-  }
-
-  openLogin(): void {
-    const currentUser = this.sessionUser();
-    this.loginNameDraft = currentUser?.name ?? '';
-    this.loginEmailDraft = currentUser?.email ?? '';
-    this.isLoginOpen.set(true);
-  }
-
-  closeLogin(): void {
-    this.isLoginOpen.set(false);
-  }
-
-  submitLogin(): void {
-    const name = this.loginNameDraft.trim();
-    const email = this.loginEmailDraft.trim();
-
-    if (!name || !email) {
-      return;
-    }
-
-    this.sessionUser.set({ name, email });
-    this.persistSession();
-    this.isLoginOpen.set(false);
-  }
-
-  logout(): void {
-    this.sessionUser.set(null);
-    this.loginNameDraft = '';
-    this.loginEmailDraft = '';
-    this.persistSession();
-    this.isLoginOpen.set(false);
   }
 
   dismissActivity(itemId: string): void {
@@ -555,32 +526,6 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
     };
   }
 
-  private restoreSession(): void {
-    const storedUser = globalThis.localStorage?.getItem('geonews-user-session');
-    if (!storedUser) {
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(storedUser) as { name?: string; email?: string };
-      if (parsed.name && parsed.email) {
-        this.sessionUser.set({ name: parsed.name, email: parsed.email });
-      }
-    } catch {
-      globalThis.localStorage?.removeItem('geonews-user-session');
-    }
-  }
-
-  private persistSession(): void {
-    const user = this.sessionUser();
-    if (!user) {
-      globalThis.localStorage?.removeItem('geonews-user-session');
-      return;
-    }
-
-    globalThis.localStorage?.setItem('geonews-user-session', JSON.stringify(user));
-  }
-
   private initializeMap(): void {
     this.map = L.map(this.mapContainer.nativeElement, {
       zoomControl: false,
@@ -680,49 +625,49 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
 
   private categoryVisual(category: string | null | undefined): CategoryVisual {
     const palette: Record<string, CategoryVisual> = {
-      MILITARY: {
-        circleStroke: '#ff6b6b',
-        circleFill: '#ff6b6b',
-        pulseRing: '#ff9b9b',
-        pulseCore: '#ffe1e1',
-      },
-      EXPLOSION: {
-        circleStroke: '#ff9f43',
-        circleFill: '#ff9f43',
-        pulseRing: '#ffd08a',
-        pulseCore: '#fff1d6',
-      },
-      PROTEST: {
-        circleStroke: '#facc15',
-        circleFill: '#facc15',
-        pulseRing: '#fde68a',
-        pulseCore: '#fef9c3',
-      },
-      POLITICAL: {
+      VIJESTI: {
         circleStroke: '#60a5fa',
         circleFill: '#60a5fa',
         pulseRing: '#93c5fd',
         pulseCore: '#dbeafe',
       },
-      HUMANITARIAN: {
+      SPORT: {
         circleStroke: '#4ade80',
         circleFill: '#4ade80',
         pulseRing: '#86efac',
         pulseCore: '#dcfce7',
       },
-      CRIME: {
+      'CRNA HRONIKA': {
+        circleStroke: '#ff6b6b',
+        circleFill: '#ff6b6b',
+        pulseRing: '#ff9b9b',
+        pulseCore: '#ffe1e1',
+      },
+      KULTURA: {
         circleStroke: '#c084fc',
         circleFill: '#c084fc',
         pulseRing: '#d8b4fe',
         pulseCore: '#f3e8ff',
       },
-      INFRASTRUCTURE: {
-        circleStroke: '#cbd5e1',
-        circleFill: '#cbd5e1',
-        pulseRing: '#e2e8f0',
-        pulseCore: '#f8fafc',
+      BIZNIS: {
+        circleStroke: '#facc15',
+        circleFill: '#facc15',
+        pulseRing: '#fde68a',
+        pulseCore: '#fef9c3',
       },
-      MEDIA: {
+      AUTO: {
+        circleStroke: '#ff9f43',
+        circleFill: '#ff9f43',
+        pulseRing: '#ffd08a',
+        pulseCore: '#fff1d6',
+      },
+      LIFESTYLE: {
+        circleStroke: '#f472b6',
+        circleFill: '#f472b6',
+        pulseRing: '#f9a8d4',
+        pulseCore: '#fce7f3',
+      },
+      TECH: {
         circleStroke: '#22d3ee',
         circleFill: '#22d3ee',
         pulseRing: '#67e8f9',

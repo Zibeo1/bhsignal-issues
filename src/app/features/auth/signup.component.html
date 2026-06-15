@@ -1,0 +1,76 @@
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-top">
+      <a class="auth-back" routerLink="/">{{ 'nav.backToMap' | t }}</a>
+      <button class="auth-lang" type="button" (click)="translation.toggleLanguage()">
+        {{ translation.language() === 'en' ? 'BS' : 'EN' }}
+      </button>
+    </div>
+
+    <div class="auth-brand">
+      <div class="auth-badge">BH</div>
+      <div>
+        <h1 class="auth-title">{{ 'auth.signupTitle' | t }}</h1>
+        <p class="auth-subtitle">{{ 'auth.signupSubtitle' | t }}</p>
+      </div>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submit()">
+      <div *ngIf="error()" class="auth-error">{{ error() }}</div>
+
+      <div>
+        <label class="auth-label" for="signup-name">{{ 'auth.name' | t }}</label>
+        <input
+          id="signup-name"
+          class="auth-input"
+          type="text"
+          name="name"
+          [(ngModel)]="name"
+          required
+          autocomplete="name"
+        />
+      </div>
+
+      <div>
+        <label class="auth-label" for="signup-email">{{ 'auth.email' | t }}</label>
+        <input
+          id="signup-email"
+          class="auth-input"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          autocomplete="email"
+        />
+      </div>
+
+      <div>
+        <label class="auth-label" for="signup-password">{{ 'auth.password' | t }}</label>
+        <input
+          id="signup-password"
+          class="auth-input"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          minlength="6"
+          autocomplete="new-password"
+        />
+        <div class="auth-hint">{{ 'auth.passwordHint' | t }}</div>
+      </div>
+
+      <button
+        class="auth-button"
+        type="submit"
+        [disabled]="loading() || !name.trim() || !email.trim() || password.length < 6"
+      >
+        {{ loading() ? ('auth.creating' | t) : ('auth.signupButton' | t) }}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      {{ 'auth.haveAccount' | t }}
+      <a class="auth-link" routerLink="/login">{{ 'nav.login' | t }}</a>
+    </div>
+  </div>
+</div>
