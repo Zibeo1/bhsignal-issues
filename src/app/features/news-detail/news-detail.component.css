@@ -46,6 +46,16 @@
   font-weight: 700;
 }
 
+.brand-logo {
+  height: 44px;
+  width: auto;
+  display: block;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 5px 9px;
+  box-sizing: border-box;
+}
+
 .brand-title {
   font-weight: 700;
   font-size: 1.05rem;
