@@ -37,13 +37,9 @@
 }
 
 .auth-logo {
-  height: 46px;
+  height: 64px;
   width: auto;
   display: block;
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 5px 9px;
-  box-sizing: border-box;
 }
 
 .auth-title {
