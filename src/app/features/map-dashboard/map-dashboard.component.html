@@ -2,10 +2,9 @@
   <main class="frame" [@fadeSlide]>
     <header class="topbar">
       <div class="brand-row">
-        <div class="brand-badge">BH</div>
+        <img class="brand-logo" src="bhsignal-logo.png" alt="BHSignal" />
         <div>
-          <div class="brand-title">BHSignal</div>
-          <div class="brand-subtitle">Bosnia and Herzegovina</div>
+          <div class="brand-subtitle">{{ 'brand.subtitle' | t }}</div>
         </div>
       </div>
 
@@ -124,8 +123,6 @@
         </div>
 
         <div class="timeline-card">
-          <div class="timeline-icon">◁</div>
-          <div class="timeline-icon">▷</div>
           <div class="timeline-range">
             <span>{{ lastSyncAt() ? (lastSyncAt() | date: 'MMM d') : 'Now' }}</span>
             <strong>{{ lastSyncAt() ? (lastSyncAt() | date: 'HH:mm') : '--:--' }}</strong>

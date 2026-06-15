@@ -252,7 +252,7 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
     });
   });
 
-  readonly timePresets = [1, 6, 12, 24];
+  readonly timePresets = [1, 6, 24];
 
   private map?: L.Map;
   private readonly circlesLayer = L.layerGroup();

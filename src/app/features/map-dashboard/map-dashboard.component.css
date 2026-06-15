@@ -53,6 +53,16 @@
   font-weight: 800;
 }
 
+.brand-logo {
+  height: 48px;
+  width: auto;
+  display: block;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 5px 10px;
+  box-sizing: border-box;
+}
+
 .brand-title {
   font-size: clamp(1.8rem, 2vw, 2.6rem);
   font-weight: 800;
@@ -201,6 +211,12 @@
 
 .select-field {
   min-width: 180px;
+}
+
+/* Style the native dropdown list to match the dark theme (Chromium/Windows). */
+.select-field option {
+  background-color: #232323;
+  color: #f5f5f5;
 }
 
 .action-button:disabled {
