@@ -23,7 +23,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Sarajevo gradonačelnik najavio nove projekte u centru grada',
     summary:
       'Gradska uprava Sarajeva predstavila je plan obnove pješačke zone, novih biciklističkih staza i proširenja zelenih površina u srcu grada. Radovi bi trebali početi u narednim mjesecima.',
-    url: 'https://example.com/news/sarajevo-projects',
+    url: 'https://klix.ba/vijesti/politika/',
     category: 'POLITICAL',
     author: 'Mirza H.',
     imageUrl: 'https://images.unsplash.com/photo-1565008576549-57569a49371d?w=900',
@@ -44,7 +44,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Banja Luka domaćin međunarodnog tehnološkog samita',
     summary:
       'Više od 500 stručnjaka iz cijelog regiona okupilo se u Banjoj Luci kako bi razgovarali o budućnosti vještačke inteligencije i digitalne ekonomije u Jugoistočnoj Evropi.',
-    url: 'https://example.com/news/banjaluka-tech',
+    url: 'https://klix.ba/vijesti/drustvo/',
     category: 'MEDIA',
     author: 'Aleksandra P.',
     imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900',
@@ -65,7 +65,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Mostar: Završena obnova historijskog dijela grada',
     summary:
       'Nakon dvije godine radova, obnova starog dijela Mostara je završena. Otvoreno je nekoliko novih izložbenih prostora i kulturnih centara.',
-    url: 'https://example.com/news/mostar-restoration',
+    url: 'https://klix.ba/vijesti/ekonomija/',
     category: 'INFRASTRUCTURE',
     author: 'Edin S.',
     imageUrl: 'https://images.unsplash.com/photo-1605649461784-edc01e8d6f30?w=900',
@@ -86,7 +86,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Tuzla: Veliki protesti zbog kvaliteta zraka',
     summary:
       'Hiljade građana okupilo se u centru Tuzle zahtijevajući hitne mjere za poboljšanje kvaliteta zraka i smanjenje zagađenja iz industrijskih postrojenja.',
-    url: 'https://example.com/news/tuzla-protest',
+    url: 'https://klix.ba/vijesti/',
     category: 'PROTEST',
     author: 'Lejla K.',
     imageUrl: 'https://images.unsplash.com/photo-1591189824344-9f3c30af2c54?w=900',
@@ -107,7 +107,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Zenica: Nova fabrika otvara 300 radnih mjesta',
     summary:
       'Strani investitor zvanično je otvorio novu fabriku u industrijskoj zoni Zenice, čime se otvara više od 300 novih radnih mjesta u oblasti metalske industrije.',
-    url: 'https://example.com/news/zenica-factory',
+    url: 'https://klix.ba/vijesti/ekonomija/',
     category: 'INFRASTRUCTURE',
     author: 'Adnan B.',
     imageUrl: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=900',
@@ -128,7 +128,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Bihać: Humanitarna akcija prikupila značajna sredstva',
     summary:
       'Lokalne organizacije u Bihaću organizovale su veliku humanitarnu akciju za pomoć ugroženim porodicama. Prikupljeno je više od 50.000 KM.',
-    url: 'https://example.com/news/bihac-humanitarian',
+    url: 'https://klix.ba/vijesti/',
     category: 'HUMANITARIAN',
     author: 'Selma D.',
     imageUrl: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=900',
@@ -149,7 +149,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Trebinje: Vinski festival privukao rekordan broj posjetilaca',
     summary:
       'Tradicionalni vinski festival u Trebinju ove godine je privukao više od 15.000 posjetilaca iz cijelog regiona. Predstavljeno je preko 40 vinskih kuća.',
-    url: 'https://example.com/news/trebinje-wine',
+    url: 'https://klix.ba/vijesti/',
     category: 'GENERAL',
     author: 'Marija J.',
     imageUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900',
@@ -170,7 +170,7 @@ const DUMMY_NEWS: NewsItem[] = [
     title: 'Bijeljina: Policija razbila kriminalnu grupu',
     summary:
       'U koordinisanoj akciji policije u Bijeljini uhapšeno je sedam osoba zbog sumnje na organizovani kriminal. Zaplijenjena je značajna količina droge i oružja.',
-    url: 'https://example.com/news/bijeljina-crime',
+    url: 'https://klix.ba/vijesti/crna-hronika/',
     category: 'CRIME',
     author: 'Vladimir N.',
     imageUrl: 'https://images.unsplash.com/photo-1453873623425-04e3f4ae9b29?w=900',
