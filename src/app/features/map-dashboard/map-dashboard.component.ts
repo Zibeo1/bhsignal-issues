@@ -206,7 +206,13 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
       }
     });
 
-    return Array.from(buckets.values()).sort((a, b) => b.count - a.count);
+    const circles = Array.from(buckets.values());
+    circles.forEach((circle) => {
+      const distinct = new Set(circle.articles.map((article) => this.categoryKey(article.category)));
+      circle.primaryCategory =
+        distinct.size > 1 ? 'MIXED' : this.categoryKey(circle.articles[0].category);
+    });
+    return circles.sort((a, b) => b.count - a.count);
   });
 
   readonly featuredArticles = computed(() => this.filteredNews().slice(0, 60));
@@ -678,6 +684,12 @@ export class MapDashboardComponent implements AfterViewInit, OnDestroy {
         circleFill: '#94a3b8',
         pulseRing: '#cbd5e1',
         pulseCore: '#f8fafc',
+      },
+      MIXED: {
+        circleStroke: '#2dd4bf',
+        circleFill: '#2dd4bf',
+        pulseRing: '#5eead4',
+        pulseCore: '#ccfbf1',
       },
     };
 
